@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول الصور إلى رموز وأرقام</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid #0ea5e9;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #0ea5e9;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .panel {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            border-bottom: 1px solid #475569;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            font-size: 1.3rem;
+        }
+        
+        .upload-area {
+            border: 3px dashed #475569;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #0ea5e9;
+            background-color: rgba(14, 165, 233, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #0ea5e9;
+            margin-bottom: 15px;
+        }
+        
+        .controls {
+            margin-top: 25px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        
+        select, input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .symbol-set {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .symbol-option {
+            padding: 8px 15px;
+            background-color: #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .symbol-option:hover {
+            background-color: #475569;
+        }
+        
+        .symbol-option.active {
+            background-color: #0ea5e9;
+            border-color: #38bdf8;
+            color: white;
+        }
+        
+        .custom-symbols {
+            margin-top: 15px;
+        }
+        
+        .custom-symbols input {
+            width: 100%;
+            padding: 12px;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .range-value {
+            display: inline-block;
+            margin-left: 10px;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+        
+        .preview-area {
+            min-height: 400px;
+            background-color: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1;
+            white-space: pre;
+            text-align: left;
+            direction: ltr;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 14px 24px;
+            background-color: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        button:hover {
+            background-color: #38bdf8;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4);
+        }
+        
+        .secondary-btn {
+            background-color: #475569;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #64748b;
+            box-shadow: 0 5px 15px rgba(71, 85, 105, 0.4);
+        }
+        
+        .success-btn {
+            background-color: #10b981;
+        }
+        
+        .success-btn:hover {
+            background-color: #34d399;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .output-info {
+            background-color: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .info-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0ea5e9;
+        }
+        
+        .info-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .panel {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-image"></i> محول الصور إلى رموز وأرقام</h1>
+            <p class="subtitle">حول أي صورة إلى فنية نصية باستخدام الرموز والأرقام. اختر مجموعة الرموز المفضلة لديك، واضبط الإعدادات، ثم انسخ النتيجة.</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-sliders-h"></i> الإعدادات والتحكم</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p>اسحب وأفلت صورة هنا أو <span style="color: #0ea5e9;">انقر للاختيار</span></p>
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 10px;">الحد الأقصى لحجم الملف: 5MB</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="symbolSet">مجموعة الرموز المستخدمة:</label>
+                        <div class="symbol-set">
+                            <div class="symbol-option active" data-set="@%#*+=-:. ">الرموز الكلاسيكية</div>
+                            <div class="symbol-option" data-set="$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,">متدرج الرمادي</div>
+                            <div class="symbol-option" data-set="01">ثنائي (0,1)</div>
+                            <div class="symbol-option" data-set="█▓▒░ ">كتل</div>
+                            <div class="symbol-option" data-set=" .:-=+*#%@">معكوس</div>
+                        </div>
+                        
+                        <div class="custom-symbols">
+                            <label for="customSymbols">رموز مخصصة (أدخل الرموز بالترتيب من الأغمق إلى الأفتح):</label>
+                            <input type="text" id="customSymbols" placeholder="مثال: @%#*+=-:. ">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="density">كثافة الرموز: <span id="densityValue" class="range-value">50</span></label>
+                        <input type="range" id="density" min="10" max="100" value="50">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="size">حجم الإخراج: <span id="sizeValue" class="range-value">50</span></label>
+                        <input type="range" id="size" min="10" max="100" value="50">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="invertColors">عكس الألوان:</label>
+                        <select id="invertColors">
+                            <option value="no">لا</option>
+                            <option value="yes">نعم</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="convertBtn" class="success-btn">
+                        <i class="fas fa-bolt"></i> تحويل الصورة
+                    </button>
+                    <button id="resetBtn" class="secondary-btn">
+                        <i class="fas fa-redo"></i> إعادة ضبط
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-eye"></i> معاينة النتيجة</h2>
+                <div class="preview-area" id="previewArea">
+                    <p style="text-align: center; color: #64748b; line-height: 1.6; padding-top: 150px;">
+                        سيظهر هنا النص الناتج بعد تحويل الصورة.<br>
+                        قم بتحميل صورة واضبط الإعدادات ثم انقر على "تحويل الصورة".
+                    </p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="copyBtn" class="secondary-btn">
+                        <i class="far fa-copy"></i> نسخ النتيجة
+                    </button>
+                    <button id="downloadBtn" class="secondary-btn">
+                        <i class="fas fa-download"></i> حفظ كملف نصي
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="output-info">
+            <div class="info-item">
+                <div class="info-value" id="symbolCount">0</div>
+                <div class="info-label">عدد الرموز المستخدمة</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="widthInfo">0</div>
+                <div class="info-label">عرض (عمود)</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="heightInfo">0</div>
+                <div class="info-label">ارتفاع (صف)</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="fileSize">0KB</div>
+                <div class="info-label">حجم النص</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>تم إنشاء هذا الموقع باستخدام HTML و CSS و JavaScript</p>
+            <p>يمكنك تحميل أي صورة وتحويلها إلى فنية نصية باستخدام الرموز والأرقام</p>
+        </footer>
+    </div>
+
+    <script>
+        // عناصر DOM
+        const imageInput = document.getElementById('imageInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewArea = document.getElementById('previewArea');
+        const convertBtn = document.getElementById('convertBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const densitySlider = document.getElementById('density');
+        const sizeSlider = document.getElementById('size');
+        const densityValue = document.getElementById('densityValue');
+        const sizeValue = document.getElementById('sizeValue');
+        const invertColorsSelect = document.getElementById('invertColors');
+        const customSymbolsInput = document.getElementById('customSymbols');
+        const symbolCountElement = document.getElementById('symbolCount');
+        const widthInfoElement = document.getElementById('widthInfo');
+        const heightInfoElement = document.getElementById('heightInfo');
+        const fileSizeElement = document.getElementById('fileSize');
+        
+        // متغيرات التطبيق
+        let originalImage = null;
+        let asciiArt = '';
+        let currentSymbolSet = '@%#*+=-:. ';
+        let symbolOptions = document.querySelectorAll('.symbol-option');
+        
+        // أحداث السحب والإفلات
+        uploadArea.addEventListener('click', () => imageInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length) {
+                imageInput.files = e.dataTransfer.files;
+                loadImage(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // تحميل الصورة
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                loadImage(e.target.files[0]);
+            }
+        });
+        
+        function loadImage(file) {
+            if (!file.type.match('image.*')) {
+                alert('الرجاء اختيار ملف صورة فقط');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('حجم الملف كبير جداً. الرجاء اختيار صورة أقل من 5MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage = new Image();
+                originalImage.onload = () => {
+                    uploadArea.innerHTML = `
+                        <div style="color: #0ea5e9; font-size: 3rem; margin-bottom: 15px;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p>تم تحميل الصورة بنجاح!</p>
+                        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 10px;">${file.name} (${Math.round(file.size/1024)}KB)</p>
+                        <div style="margin-top: 15px; max-width: 200px; max-height: 150px; overflow: hidden; border-radius: 8px; margin: 15px auto;">
+                            <img src="${e.target.result}" style="width: 100%; height: auto;">
+                        </div>
+                    `;
+                };
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // اختيار مجموعة الرموز
+        symbolOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                symbolOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                currentSymbolSet = option.dataset.set;
+                customSymbolsInput.value = '';
+                
+                // إذا تم اختيار الرموز المخصصة، تفعيل حقل الإدخال
+                if (option.dataset.set === '') {
+                    customSymbolsInput.focus();
+                }
+            });
+        });
+        
+        // تحديث قيم المدخلات
+        densitySlider.addEventListener('input', () => {
+            densityValue.textContent = densitySlider.value;
+        });
+        
+        sizeSlider.addEventListener('input', () => {
+            sizeValue.textContent = sizeSlider.value;
+        });
+        
+        // الرموز المخصصة
+        customSymbolsInput.addEventListener('input', () => {
+            if (customSymbolsInput.value.trim()) {
+                symbolOptions.forEach(opt => opt.classList.remove('active'));
+                currentSymbolSet = customSymbolsInput.value;
+            }
+        });
+        
+        // تحويل الصورة إلى رموز
+        convertBtn.addEventListener('click', () => {
+            if (!originalImage) {
+                alert('الرجاء تحميل صورة أولاً');
+                return;
+            }
+            
+            const density = parseInt(densitySlider.value);
+            const size = parseInt(sizeSlider.value);
+            const invert = invertColorsSelect.value === 'yes';
+            
+            // استخدم مجموعة الرموز المحددة
+            let symbols = currentSymbolSet;
+            if (!symbols || symbols.trim() === '') {
+                symbols = '@%#*+=-:. ';
+                customSymbolsInput.value = symbols;
+            }
+            
+            // إنشاء عنصر canvas لمعالجة الصورة
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // حساب أبعاد الإخراج بناءً على إعداد الحجم
+            const outputWidth = Math.floor(size * 2);
+            const outputHeight = Math.floor(outputWidth * (originalImage.height / originalImage.width) * 0.5);
+            
+            // تعيين أبعاد canvas
+            canvas.width = outputWidth;
+            canvas.height = outputHeight;
+            
+            // رسم الصورة على canvas
+            ctx.drawImage(originalImage, 0, 0, outputWidth, outputHeight);
+            
+            // الحصول على بيانات البكسل
+            const imageData = ctx.getImageData(0, 0, outputWidth, outputHeight);
+            const data = imageData.data;
+            
+            // إنشاء النص من بيانات الصورة
+            let asciiOutput = '';
+            
+            for (let y = 0; y < outputHeight; y += density/25) {
+                for (let x = 0; x < outputWidth; x += density/25) {
+                    // حساب مؤشر البكسل
+                    const idx = (Math.floor(y) * outputWidth + Math.floor(x)) * 4;
+                    
+                    // الحصول على قيم RGBA
+                    const r = data[idx];
+                    const g = data[idx + 1];
+                    const b = data[idx + 2];
+                    
+                    // حساب درجة اللون الرمادي (0-255)
+                    let gray = (r + g + b) / 3;
+                    
+                    // عكس الألوان إذا طلب المستخدم ذلك
+                    if (invert) {
+                        gray = 255 - gray;
+                    }
+                    
+                    // تعيين رمز بناءً على درجة اللون الرمادي
+                    const symbolIndex = Math.floor((gray / 255) * (symbols.length - 1));
+                    const symbol = symbols[symbolIndex];
+                    
+                    asciiOutput += symbol || ' ';
+                }
+                asciiOutput += '\n';
+            }
+            
+            // حفظ النتيجة وعرضها
+            asciiArt = asciiOutput;
+            previewArea.textContent = asciiOutput;
+            previewArea.style.textAlign = 'left';
+            previewArea.style.direction = 'ltr';
+            previewArea.style.fontSize = `${8 + size/20}px`;
+            previewArea.style.lineHeight = '1';
+            
+            // تحديث معلومات الإخراج
+            updateOutputInfo(asciiOutput, symbols);
+        });
+        
+        // تحديث معلومات الإخراج
+        function updateOutputInfo(asciiText, symbols) {
+            // عدد الرموز المستخدمة
+            const uniqueSymbols = new Set(asciiText.replace(/\n/g, ''));
+            symbolCountElement.textContent = uniqueSymbols.size;
+            
+            // أبعاد النص
+            const lines = asciiText.split('\n').filter(line => line.trim() !== '');
+            const width = lines.length > 0 ? lines[0].length : 0;
+            const height = lines.length;
+            
+            widthInfoElement.textContent = width;
+            heightInfoElement.textContent = height;
+            
+            // حجم النص
+            const textSize = new Blob([asciiText]).size;
+            fileSizeElement.textContent = `${Math.round(textSize/1024 * 10)/10}KB`;
+        }
+        
+        // إعادة ضبط
+        resetBtn.addEventListener('click', () => {
+            originalImage = null;
+            asciiArt = '';
+            imageInput.value = '';
+            densitySlider.value = 50;
+            sizeSlider.value = 50;
+            densityValue.textContent = '50';
+            sizeValue.textContent = '50';
+            invertColorsSelect.value = 'no';
+            customSymbolsInput.value = '';
+            
+            // إعادة تعيين مجموعة الرموز
+            symbolOptions.forEach(opt => opt.classList.remove('active'));
+            symbolOptions[0].classList.add('active');
+            currentSymbolSet = symbolOptions[0].dataset.set;
+            
+            uploadArea.innerHTML = `
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <p>اسحب وأفلت صورة هنا أو <span style="color: #0ea5e9;">انقر للاختيار</span></p>
+                <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 10px;">الحد الأقصى لحجم الملف: 5MB</p>
+            `;
+            
+            previewArea.innerHTML = `
+                <p style="text-align: center; color: #64748b; line-height: 1.6; padding-top: 150px;">
+                    سيظهر هنا النص الناتج بعد تحويل الصورة.<br>
+                    قم بتحميل صورة واضبط الإعدادات ثم انقر على "تحويل الصورة".
+                </p>
+            `;
+            
+            // إعادة تعيين معلومات الإخراج
+            symbolCountElement.textContent = '0';
+            widthInfoElement.textContent = '0';
+            heightInfoElement.textContent = '0';
+            fileSizeElement.textContent = '0KB';
+        });
+        
+        // نسخ النتيجة
+        copyBtn.addEventListener('click', () => {
+            if (!asciiArt) {
+                alert('لا يوجد نص للنسخ. قم بتحويل صورة أولاً.');
+                return;
+            }
+            
+            navigator.clipboard.writeText(asciiArt)
+                .then(() => {
+                    // تغيير نص الزر مؤقتاً للإشارة إلى النجاح
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+                    copyBtn.style.backgroundColor = '#10b981';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.backgroundColor = '';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('فشل النسخ: ', err);
+                    alert('فشل نسخ النص. حاول مرة أخرى.');
+                });
+        });
+        
+        // تنزيل النتيجة كملف نصي
+        downloadBtn.addEventListener('click', () => {
+            if (!asciiArt) {
+                alert('لا يوجد نص للتنزيل. قم بتحويل صورة أولاً.');
+                return;
+            }
+            
+            const blob = new Blob([asciiArt], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ascii-art.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        // مثال عند التحميل
+        window.addEventListener('load', () => {
+            // تحميل صورة مثال تلقائية
+            const sampleImage = new Image();
+            sampleImage.onload = () => {
+                originalImage = sampleImage;
+                uploadArea.innerHTML = `
+                    <div style="color: #0ea5e9; font-size: 3rem; margin-bottom: 15px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p>تم تحميل صورة تجريبية!</p>
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 10px;">sample.png (25KB)</p>
+                    <div style="margin-top: 15px; max-width: 200px; max-height: 150px; overflow: hidden; border-radius: 8px; margin: 15px auto;">
+                        <img src="${sampleImage.src}" style="width: 100%; height: auto;">
+                    </div>
+                `;
+            };
+            
+            // إنشاء صورة تجريبية باستخدام canvas
+            const sampleCanvas = document.createElement('canvas');
+            const sampleCtx = sampleCanvas.getContext('2d');
+            sampleCanvas.width = 200;
+            sampleCanvas.height = 150;
+            
+            // رسم شكل تجريبي
+            sampleCtx.fillStyle = '#0ea5e9';
+            sampleCtx.fillRect(0, 0, 200, 150);
+            
+            sampleCtx.fillStyle = '#1e293b';
+            sampleCtx.beginPath();
+            sampleCtx.arc(100, 75, 50, 0, Math.PI * 2);
+            sampleCtx.fill();
+            
+            sampleCtx.fillStyle = '#0ea5e9';
+            sampleCtx.font = 'bold 30px Arial';
+            sampleCtx.textAlign = 'center';
+            sampleCtx.textBaseline = 'middle';
+            sampleCtx.fillText('ASCII', 100, 75);
+            
+            sampleImage.src = sampleCanvas.toDataURL();
+        });
+    </script>
+</body>
+</html>
